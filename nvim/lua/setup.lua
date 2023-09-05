@@ -1,14 +1,15 @@
+local mason = require('mason')
+
 local lsp = require('lspconfig')
+local mason_lsp = require('mason-lspconfig')
 local cmp = require('cmp')
 local cmp_lsp = require('cmp_nvim_lsp')
 
--- setup popui
-vim.ui.select = require"popui.ui-overrider"
-vim.ui.input = require"popui.input-overrider"
-vim.api.nvim_set_keymap("n", ",d", ':lua require"popui.diagnostics-navigator"()<CR>', { noremap = true, silent = true }) 
-vim.api.nvim_set_keymap("n", ",m", ':lua require"popui.marks-manager"()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", ",r", ':lua require"popui.references-navigator"()<CR>', { noremap = true, silent = true })
+-- setup mason
+mason.setup()
+mason_lsp.setup()
 
+-- setup cmp + setup lsp
 cmp.setup({
 	snippet = {
 		expand = function(args)
@@ -61,22 +62,30 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- setup lightbulb plugin
-require('nvim-lightbulb').setup({
-	sign = {
-		enabled = true
-	},
-	virtual_text = { enabled = false },
-	float = { enabled = false },
-	status_text = { enabled = false },
-	number = {enabled = false },
-	line = { enabled = true },
 
-	autocmd = {
-		enabled = true,
-		updatetime = 200,
-		events = { "CursorHold", "CursorHoldI" },
-		pattern = { "*" },
-
-	}
-})
+-- setup popui
+--vim.ui.select = require"popui.ui-overrider"
+--vim.ui.input = require"popui.input-overrider"
+--vim.api.nvim_set_keymap("n", ",d", ':lua require"popui.diagnostics-navigator"()<CR>', { noremap = true, silent = true }) 
+--vim.api.nvim_set_keymap("n", ",m", ':lua require"popui.marks-manager"()<CR>', { noremap = true, silent = true })
+--vim.api.nvim_set_keymap("n", ",r", ':lua require"popui.references-navigator"()<CR>', { noremap = true, silent = true })
+--
+---- setup lightbulb plugin
+--require('nvim-lightbulb').setup({
+--	sign = {
+--		enabled = true
+--	},
+--	virtual_text = { enabled = false },
+--	float = { enabled = false },
+--	status_text = { enabled = false },
+--	number = {enabled = false },
+--	line = { enabled = true },
+--
+--	autocmd = {
+--		enabled = true,
+--		updatetime = 200,
+--		events = { "CursorHold", "CursorHoldI" },
+--		pattern = { "*" },
+--
+--	}
+--})

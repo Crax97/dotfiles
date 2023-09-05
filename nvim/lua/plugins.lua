@@ -18,6 +18,19 @@ local plugins = {
 
 	"mfussenegger/nvim-dap", -- neovim debug adapter protocol
 	"rcarriga/nvim-dap-ui", -- neovim dap ui
+ 	-- Should this dude die my nvim journey will be basically over
+	'hrsh7th/cmp-path', -- autocomplete source for filesystem
+	'hrsh7th/cmp-buffer', -- autocomplete source for buffer words
+	'hrsh7th/cmp-cmdline', -- autocomplete cmdline commands
+	'hrsh7th/nvim-cmp', -- autocomplete
+	
+	'hrsh7th/cmp-nvim-lsp',
+	'hrsh7th/cmp-nvim-lsp-signature-help', -- display function signatures
+	'hrsh7th/cmp-vsnip',
+	'hrsh7th/vim-vsnip', -- snippets engine
+	
+	'rstacruz/vim-closer', -- auto closing braces
+
 } 
 
 local opts = {}

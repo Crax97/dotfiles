@@ -1,7 +1,7 @@
 lua require('plugins')
 lua require('setup')
 
-set number
+set number relativenumber
 set signcolumn=yes
 
 let g:mkdp_browser = '/usr/bin/firefox'

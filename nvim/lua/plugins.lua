@@ -18,6 +18,7 @@ local plugins = {
 
 	"mfussenegger/nvim-dap", -- neovim debug adapter protocol
 	"rcarriga/nvim-dap-ui", -- neovim dap ui
+	
  	-- Should this dude die my nvim journey will be basically over
 	'hrsh7th/cmp-path', -- autocomplete source for filesystem
 	'hrsh7th/cmp-buffer', -- autocomplete source for buffer words
@@ -31,6 +32,15 @@ local plugins = {
 	
 	'rstacruz/vim-closer', -- auto closing braces
 
+ 	{ 
+		"iamcco/markdown-preview.nvim",
+		build = "cd app && npm install",
+		init = function(lp) vim.g.mkdp_filetypes = { "markdown" } end, 
+		ft = { "markdown" }, 
+	},
+
+	'mfussenegger/nvim-lint', -- linter support
+	'mhartington/formatter.nvim',
 } 
 
 local opts = {}

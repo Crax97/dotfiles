@@ -7,7 +7,12 @@ local cmp_lsp = require('cmp_nvim_lsp')
 
 -- setup mason
 mason.setup()
-mason_lsp.setup()
+mason_lsp.setup {
+	ensure_install = {
+		"rust_analyzer",
+		"clangd",
+	}
+}
 
 -- setup cmp + setup lsp
 cmp.setup({
@@ -53,6 +58,13 @@ local capabilities = cmp_lsp.default_capabilities()
 lsp.rust_analyzer.setup({
 	capabilities = capabilities
 })
+
+-- setup formatter
+require("formatter").setup {
+	["*"] = {
+		require("formatter.filetypes.any").remove_trailing_whitespace
+	}
+}
 
 -- setup lsp keybinds
 -- as per doc suggestions, only setup them when a lsp client is active

@@ -1,5 +1,4 @@
 lua require('plugins')
-
 lua require('setup')
 
 set number

@@ -11,3 +11,5 @@ augroup FormatAutogroup
 	autocmd!
 	autocmd BufWritePost * FormatWrite
 augroup End
+
+colorscheme habamax

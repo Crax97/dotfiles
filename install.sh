@@ -21,11 +21,22 @@ install_font () {
 	rm $FONT_TO_INSTALL.zip
 }
 
-FONT_TO_INSTALL="Iosevka"
 ROOT_DIR=$(git rev-parse --show-toplevel)
+config() {
+	if [[ "$1" == "" ]]
+	then
+		echo "link_config(): no arg, return";
+		return;
+	fi
 
-ln -s -T $ROOT_DIR/nvim $HOME/.config/nvim
-ln -s -T $ROOT_DIR/alacritty $HOME/.config/alacritty
+	echo "Linking config for $1"
+	(ln -s -T $ROOT_DIR/$1 $HOME/.config/$1 ) 2>/dev/null
+}
+
+FONT_TO_INSTALL="Iosevka"
+
+config "nvim"
+config "kitty"
 
 FOUND_FONTS=$(find $HOME/.local/share/fonts -iname "$FONT_TO_INSTALL*.ttf")
 if [[ "${#FOUND_FONTS}" == "0" || $@ == *"--force-install-fonts"* ]]

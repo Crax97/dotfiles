@@ -41,6 +41,8 @@ local plugins = {
 
 	'mfussenegger/nvim-lint', -- linter support
 	'mhartington/formatter.nvim',
+
+	'stevearc/overseer.nvim', -- Task runner
 } 
 
 local opts = {}

@@ -74,6 +74,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+-- setup overseer - task runner
+require('overseer').setup()
 
 -- setup popui
 --vim.ui.select = require"popui.ui-overrider"

@@ -13,3 +13,7 @@ augroup FormatAutogroup
 augroup End
 
 colorscheme habamax
+
+map ,e :e ~/.config/nvim/init.vim<CR>
+map ,p :e ~/.config/nvim/lua/plugins.lua<CR>
+map ,s :e ~/.config/nvim/lua/setup.lua<CR>

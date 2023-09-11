@@ -43,6 +43,8 @@ local plugins = {
 	'mhartington/formatter.nvim',
 
 	'stevearc/overseer.nvim', -- Task runner
+
+	'equalsraf/neovim-gui-shim', -- Nvim QT gui options 
 } 
 
 local opts = {}

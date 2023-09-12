@@ -8,6 +8,12 @@ local cmp_lsp = require('cmp_nvim_lsp')
 
 local rust_utils = require ('utils')
 
+local workspace_root, project_type = rust_utils.find_workspace_root()
+if workspace_root ~= nil then
+	vim.g.workspace_root = workspace_root
+	vim.g.project_type = project_type
+end
+
 -- setup mason
 mason.setup()
 mason_lsp.setup {
@@ -78,9 +84,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- setup overseer - task runner
-require('overseer').setup()
-
 -- setup dap
 local dap = require('dap')
 
@@ -100,18 +103,18 @@ dap.adapters.c = dap.adapters.lldb
 dap.adapters.cpp = dap.adapters.lldb
 
 function setup_dap_configurations() 
-	local workspace_root, project_type = rust_utils.find_workspace_root()
 	if workspace_root ~= nil then
-		vim.g.workspace_root = workspace_root
-		vim.g.project_type = project_type
 		local did_setup_launch = rust_utils.try_setup_launch_json(workspace_root)
 	end
-
 	if project_type == "rust" then
+		local rust = {}
 		local cargo_dir = vim.fn.trim(vim.fn.system('which cargo'))
 		local debugger = 'lldb'
-		local found_binaries = rust_utils.find_cargo_binaries(workspace_root)
+		found_binaries = rust_utils.find_cargo_binaries(workspace_root)
+		rust.binaries = {}
+
 		for _, bin in ipairs(found_binaries) do
+			table.insert(rust.binaries, bin)
 			local debug_bin_path = workspace_root .. '/target/debug/' .. bin
 			local release_bin_path = workspace_root .. '/target/debug/' .. bin
 			local config = {
@@ -122,7 +125,7 @@ function setup_dap_configurations()
 				cwd = workspace_root,
 				args = {
 				},
-				build_command = "cargo build --bin " .. bin
+				preLaunchTask = "cargo-debug-"..bin
 			}
 			table.insert(dap.configurations[project_type], config)
 			config = {
@@ -133,11 +136,12 @@ function setup_dap_configurations()
 				cwd = workspace_root,
 				args = {
 				},
-				build_command = "cargo build --release --bin " .. bin
+				preLaunchTask = "cargo-release-"..bin
 			}
 			table.insert(dap.configurations[project_type], config)
 
 		end
+		vim.g.rust = rust
 	end
 end
 
@@ -179,7 +183,12 @@ vim.api.nvim_create_user_command('Bp', 'lua require \'dap\'.toggle_breakpoint()'
 vim.api.nvim_create_user_command('Run', Run, { nargs='?' })
 
 setup_dap_configurations()
--- setup rust-tools
+-- setup overseer - task runner
+local overseer = require('overseer')
+overseer.setup({
+	templates = { "cargo.debug", "cargo.release", "cargo.targets" }
+})
+
 
 -- setup popui
 --vim.ui.select = require"popui.ui-overrider"

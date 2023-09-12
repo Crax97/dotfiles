@@ -12,6 +12,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local plugins = {
+	{ "Joakker/lua-json5", build = "./install.sh" }, -- json5 support
 	"williamboman/mason.nvim", -- editor tooling manager
 	"williamboman/mason-lspconfig.nvim", -- mason lsp configurator
  	"neovim/nvim-lspconfig", -- nvim lspconfig
@@ -24,7 +25,7 @@ local plugins = {
 	'hrsh7th/cmp-buffer', -- autocomplete source for buffer words
 	'hrsh7th/cmp-cmdline', -- autocomplete cmdline commands
 	'hrsh7th/nvim-cmp', -- autocomplete
-	
+
 	'hrsh7th/cmp-nvim-lsp',
 	'hrsh7th/cmp-nvim-lsp-signature-help', -- display function signatures
 	'hrsh7th/cmp-vsnip',

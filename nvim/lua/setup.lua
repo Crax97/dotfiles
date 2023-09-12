@@ -1,9 +1,12 @@
 local mason = require('mason')
+local mason_registry = require('mason-registry')
 
 local lsp = require('lspconfig')
 local mason_lsp = require('mason-lspconfig')
 local cmp = require('cmp')
 local cmp_lsp = require('cmp_nvim_lsp')
+
+local rust_utils = require ('utils')
 
 -- setup mason
 mason.setup()
@@ -11,6 +14,7 @@ mason_lsp.setup {
 	ensure_install = {
 		"rust_analyzer",
 		"clangd",
+		"codelldb",
 	}
 }
 
@@ -76,6 +80,50 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 -- setup overseer - task runner
 require('overseer').setup()
+
+-- setup dap
+local dap = require('dap')
+
+local codelldb = mason_registry.get_package("codelldb")
+local codelldb_install_path = codelldb:get_install_path()
+local extension_path = codelldb_install_path .. "/extensions/"
+local codelldb_executable = extension_path .. "adapter/codelldb"
+local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+
+dap.adapters.lldb = {
+  type = 'executable',
+  command = "/usr/bin/lldb-vscode",
+  name = 'lldb',
+}
+dap.adapters.rust = dap.adapters.lldb
+dap.adapters.c = dap.adapters.lldb
+dap.adapters.cpp = dap.adapters.lldb
+
+function setup_dap_configurations() 
+	local workspace_root, project_type = rust_utils.find_workspace_root()
+	if workspace_root ~= nil then
+		vim.g.workspace_root = workspace_root
+		vim.g.project_type = project_type
+		local did_setup_launch = rust_utils.try_setup_launch_json(workspace_root)
+	end
+end
+
+function Run()
+	local old_ft = vim.bo.filetype
+	if vim.g.project_type ~= nil then
+		vim.bo.filetype = vim.g.project_type
+	end
+
+	dap.continue()
+	
+	vim.bo.filetype = old_ft
+end
+
+vim.api.nvim_create_user_command('Bp', 'lua require \'dap\'.toggle_breakpoint()', {})
+vim.api.nvim_create_user_command('Run', Run, {})
+
+setup_dap_configurations()
+-- setup rust-tools
 
 -- setup popui
 --vim.ui.select = require"popui.ui-overrider"

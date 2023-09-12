@@ -56,5 +56,38 @@ function M.try_setup_launch_json(workspace_root)
 	return false
 end
 
+local function table_find(t, target)
+	for i, p in ipairs(t) do
+		if p == target then
+			return i
+		end
+	end
+	return nil
+end
 
+M.table_find = table_find
+
+function M.find_cargo_binaries(workspace_root)
+	local manifest_path = workspace_root .. "/Cargo.toml"
+	local cargo_manifest_result = exec_syscall('cargo metadata --no-deps --format-version 1 --manifest-path "' .. manifest_path .. '"')
+	if cargo_manifest_result == nil then
+		return nil
+	end
+
+	local parse = require'json5'.parse
+
+	local cargo_data = parse(cargo_manifest_result)
+	local found_binaries = {}
+	local packages = cargo_data.packages
+
+	for _, package in ipairs(packages) do
+		for _, target in ipairs(package.targets) do
+			if table_find(target.kind, "bin") then
+				table.insert(found_binaries, target.name)
+			end
+		end
+	end
+	return found_binaries
+end
+ 
 return M

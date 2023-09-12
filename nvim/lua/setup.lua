@@ -106,9 +106,46 @@ function setup_dap_configurations()
 		vim.g.project_type = project_type
 		local did_setup_launch = rust_utils.try_setup_launch_json(workspace_root)
 	end
+
+	if project_type == "rust" then
+		local cargo_dir = vim.fn.trim(vim.fn.system('which cargo'))
+		local debugger = 'lldb'
+		local found_binaries = rust_utils.find_cargo_binaries(workspace_root)
+		for _, bin in ipairs(found_binaries) do
+			local debug_bin_path = workspace_root .. '/target/debug/' .. bin
+			local release_bin_path = workspace_root .. '/target/debug/' .. bin
+			local config = {
+				type = debugger,
+				request = 'launch',
+				name = 'debug ' .. bin,
+				program = debug_bin_path,
+				cwd = workspace_root,
+				args = {
+				},
+				build_command = "cargo build --bin " .. bin
+			}
+			table.insert(dap.configurations[project_type], config)
+			config = {
+				type = debugger,
+				request = 'launch',
+				name = 'release ' .. bin,
+				program = release_bin_path,
+				cwd = workspace_root,
+				args = {
+				},
+				build_command = "cargo build --release --bin " .. bin
+			}
+			table.insert(dap.configurations[project_type], config)
+
+		end
+	end
 end
 
 function Run(opts)
+	if dap.status() ~= "" then
+		dap.continue()
+		return
+	end
 	if vim.g.project_type ~= nil then
 		local project_type = vim.g.project_type
 		local config_substr = opts.fargs[1]
@@ -130,6 +167,7 @@ function Run(opts)
 			end
 		else 
 			local old_config = vim.bo.filetype
+			vim.bo.filetype = project_type
 			dap.continue()
 			vim.bo.filetype = old_config
 		end

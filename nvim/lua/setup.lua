@@ -108,19 +108,37 @@ function setup_dap_configurations()
 	end
 end
 
-function Run()
-	local old_ft = vim.bo.filetype
+function Run(opts)
 	if vim.g.project_type ~= nil then
-		vim.bo.filetype = vim.g.project_type
+		local project_type = vim.g.project_type
+		local config_substr = opts.fargs[1]
+		if config_substr ~= nil then
+			config_substr = config_substr:lower()
+			local configurations = dap.configurations[project_type]
+
+			local found_configuration = nil
+			for _, configuration in ipairs(configurations) do
+				if configuration.name:lower():find(config_substr) then
+					found_configuration = configuration
+				end
+			end
+
+			if found_configuration then
+				dap.run(found_configuration, {})
+			else
+				print('No configuration containing ' .. config_substr)
+			end
+		else 
+			local old_config = vim.bo.filetype
+			dap.continue()
+			vim.bo.filetype = old_config
+		end
 	end
 
-	dap.continue()
-	
-	vim.bo.filetype = old_ft
 end
 
 vim.api.nvim_create_user_command('Bp', 'lua require \'dap\'.toggle_breakpoint()', {})
-vim.api.nvim_create_user_command('Run', Run, {})
+vim.api.nvim_create_user_command('Run', Run, { nargs='?' })
 
 setup_dap_configurations()
 -- setup rust-tools

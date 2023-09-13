@@ -3,13 +3,24 @@ local M = {}
 -- Runs a single command, stripping any newlines.
 -- returns stdout if command had success, otherwise nil
 local function exec_syscall(command, opts)
-	local result = vim.fn.system(command, opts)
+	local result = vim.fn.trim(vim.fn.system(command, opts))
 	if vim.v.shell_error == 0 then
-		return result:gsub("\n", "")
+		return result
 	else
 		return nil
 	end
 
+end
+
+function M.find_one_file(p, r) 
+	for _, p in ipairs(vim.fs.find(p, {
+		limit = 1,
+		type = "file",
+		path = r
+	})) do
+		return p
+	end
+	return nil
 end
 
 local function find_cargo_workspace_root()
@@ -34,8 +45,9 @@ end
 
 -- Given a path it tries to find and load a launch.json
 -- @param workspace_root string with the location of the project 
+-- @returns true if launch json was setup correctly
 function M.try_setup_launch_json(workspace_root)
-	local launch_json_vscode = exec_syscall('find ' .. workspace_root .. ' -iname launch.json')
+	local launch_json_vscode = M.find_one_file("launch.json", workspace_root)
 	if launch_json_vscode == nil then
 		return false
 	end

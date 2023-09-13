@@ -107,6 +107,10 @@ function setup_dap_configurations()
 		local did_setup_launch = rust_utils.try_setup_launch_json(workspace_root)
 	end
 	if project_type == "rust" then
+		if dap.configurations[project_type] == nil then
+			dap.configurations[project_type] = {}
+		end
+
 		local rust = {}
 		local cargo_dir = vim.fn.trim(vim.fn.system('which cargo'))
 		local debugger = 'lldb'

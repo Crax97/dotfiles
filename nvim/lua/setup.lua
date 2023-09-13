@@ -43,7 +43,7 @@ cmp.setup({
       		['<C-f>'] = cmp.mapping.scroll_docs(4),
       		['<C-Space>'] = cmp.mapping.complete(),
       		['<C-e>'] = cmp.mapping.abort(),
-      		['<CR>'] = cmp.mapping.confirm({
+      		['<C-CR>'] = cmp.mapping.confirm({
 			behavior = cmp.ConfirmBehavior.Insert,
 			select = true 
 		}), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
@@ -111,10 +111,13 @@ function setup_dap_configurations()
 		local cargo_dir = vim.fn.trim(vim.fn.system('which cargo'))
 		local debugger = 'lldb'
 		found_binaries = rust_utils.find_cargo_binaries(workspace_root)
-		rust.binaries = {}
+		rust.binaries = found_binaries
+
+		if found_binaries == nil then
+			return
+		end
 
 		for _, bin in ipairs(found_binaries) do
-			table.insert(rust.binaries, bin)
 			local debug_bin_path = workspace_root .. '/target/debug/' .. bin
 			local release_bin_path = workspace_root .. '/target/debug/' .. bin
 			local config = {

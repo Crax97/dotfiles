@@ -13,7 +13,7 @@ local function exec_syscall(command, opts)
 end
 
 local function find_cargo_workspace_root()
-	local locate_result = exec_syscall('cargo locate-project --workspace --message-format plain', {})
+	local locate_result = exec_syscall('cargo locate-project --quiet --workspace --message-format plain', {})
 	if locate_result ~= nil then
 		return locate_result:gsub("Cargo.toml", "")
 	else
@@ -23,7 +23,7 @@ end
 
 -- Tries to find a workspace
 -- returns the workspace's root + project type
--- ex. /home/guy/rust_project/, "cargo"
+-- ex. /home/guy/rust_project/, "rust"
 function M.find_workspace_root() 
 	local cargo_root = find_cargo_workspace_root()
 	if cargo_root ~= nil then
@@ -47,9 +47,6 @@ function M.try_setup_launch_json(workspace_root)
 			codelldb = {'rust', 'c', 'cpp'}, 
 			lldb = {'rust', 'c', 'cpp'}
 		})
-		for k, p in ipairs(require'dap'.configurations) do
-			print(k)
-		end
 		return true
 	end
 
@@ -68,8 +65,8 @@ end
 M.table_find = table_find
 
 function M.find_cargo_binaries(workspace_root)
-	local manifest_path = workspace_root .. "/Cargo.toml"
-	local cargo_manifest_result = exec_syscall('cargo metadata --no-deps --format-version 1 --manifest-path "' .. manifest_path .. '"')
+	local manifest_path = workspace_root .. "Cargo.toml"
+	local cargo_manifest_result = exec_syscall('cargo metadata --quiet --no-deps --format-version 1 --manifest-path "' .. manifest_path .. '"')
 	if cargo_manifest_result == nil then
 		return nil
 	end

@@ -2,5 +2,5 @@ set mouse=a
 
 " Set Editor Font
 if exists(':GuiFont')
-    GuiFont Iosevka NFM:h12
+    GuiFont Iosevka NFM:h11
 endif

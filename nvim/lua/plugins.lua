@@ -11,8 +11,15 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local json5_build = "./install.sh"
+
+if vim.fn.has('win32') then
+	json5_build = "powershell ./install.ps1"
+end
+
+
 local plugins = {
-	{ "Joakker/lua-json5", build = "./install.sh" }, -- json5 support
+	{ "Crax97/lua-json5", build = json5_build, branch = "windows-support" }, -- json5 support
 	"williamboman/mason.nvim", -- editor tooling manager
 	"williamboman/mason-lspconfig.nvim", -- mason lsp configurator
  	"neovim/nvim-lspconfig", -- nvim lspconfig

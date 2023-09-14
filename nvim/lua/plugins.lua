@@ -14,12 +14,12 @@ vim.opt.rtp:prepend(lazypath)
 local json5_build = "./install.sh"
 
 if vim.fn.has('win32') == 1 then
-	print("ziopera")
 	json5_build = "powershell ./install.ps1"
 end
 
-
 local plugins = {
+	'nvim-lua/plenary.nvim', -- utils for developing plugins
+
 	{ "Crax97/lua-json5", build = json5_build, branch = "windows-support" }, -- json5 support
 	"williamboman/mason.nvim", -- editor tooling manager
 	"williamboman/mason-lspconfig.nvim", -- mason lsp configurator
@@ -52,6 +52,13 @@ local plugins = {
 	'mhartington/formatter.nvim',
 
 	'stevearc/overseer.nvim', -- Task runner
+
+	{ 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' }, -- ast parsing library, used by plugins/to improve vim syntax stuff 
+	{ 'nvim-telescope/telescope.nvim', tag = '0.1.3' }, -- extensible fuzzy file finder
+	{ 
+		'nvim-telescope/telescope-fzf-native.nvim', 
+		build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' 
+	}, -- Native fzf implementation
 
 	'equalsraf/neovim-gui-shim', -- Nvim QT gui options 
 } 

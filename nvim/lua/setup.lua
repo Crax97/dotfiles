@@ -188,6 +188,7 @@ end
 
 vim.api.nvim_create_user_command('Bp', 'lua require \'dap\'.toggle_breakpoint()', {})
 vim.api.nvim_create_user_command('Run', Run, { nargs='?' })
+vim.keymap.set({'i', 'n', 'v'}, '<F5>', Run, {  })
 
 setup_dap_configurations()
 -- setup overseer - task runner

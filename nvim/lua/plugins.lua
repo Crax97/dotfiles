@@ -19,7 +19,6 @@ end
 
 local plugins = {
 	'nvim-lua/plenary.nvim', -- utils for developing plugins
-
 	{ "Crax97/lua-json5", build = json5_build, branch = "windows-support" }, -- json5 support
 	"williamboman/mason.nvim", -- editor tooling manager
 	"williamboman/mason-lspconfig.nvim", -- mason lsp configurator

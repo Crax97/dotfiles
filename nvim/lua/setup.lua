@@ -1,12 +1,12 @@
-local mason = require('mason')
-local mason_registry = require('mason-registry')
+local mason = require("mason")
+local mason_registry = require("mason-registry")
 
-local lsp = require('lspconfig')
-local mason_lsp = require('mason-lspconfig')
-local cmp = require('cmp')
-local cmp_lsp = require('cmp_nvim_lsp')
+local lsp = require("lspconfig")
+local mason_lsp = require("mason-lspconfig")
+local cmp = require("cmp")
+local cmp_lsp = require("cmp_nvim_lsp")
 
-local rust_utils = require ('utils')
+local rust_utils = require("utils")
 
 local workspace_root, project_type = rust_utils.find_workspace_root()
 if workspace_root ~= nil then
@@ -16,13 +16,19 @@ end
 
 -- setup mason
 mason.setup()
-mason_lsp.setup {
+mason_lsp.setup({
 	ensure_install = {
 		"rust_analyzer",
 		"clangd",
 		"codelldb",
-	}
-}
+	},
+})
+
+mason_lsp.setup_handlers({
+	function(sn)
+		lsp[sn].setup({})
+	end,
+})
 
 -- setup cmp + setup lsp
 cmp.setup({
@@ -32,60 +38,67 @@ cmp.setup({
 		end,
 	},
 	sources = cmp.config.sources({
-		{ name = 'nvim_lsp' },
-		{ name = 'vsnip' },
-		{ name = 'nvim_lsp_signature_help' },
+		{ name = "nvim_lsp" },
+		{ name = "vsnip" },
+		{ name = "nvim_lsp_signature_help" },
 	}, {
-		{ name = 'buffer' },
+		{ name = "buffer" },
 	}),
 	mapping = cmp.mapping.preset.insert({
-		['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      		['<C-f>'] = cmp.mapping.scroll_docs(4),
-      		['<C-Space>'] = cmp.mapping.complete(),
-      		['<C-e>'] = cmp.mapping.abort(),
-      		['<C-CR>'] = cmp.mapping.confirm({
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		["<C-CR>"] = cmp.mapping.confirm({
 			behavior = cmp.ConfirmBehavior.Insert,
-			select = true 
+			select = true,
 		}), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    
-    }),
-    on_attach = function(client, bufnr)
-	    require ('lsp_signature').on_attach(signature_setup, bufnr)
-    end
+	}),
+	on_attach = function(client, bufnr)
+		require("lsp_signature").on_attach(signature_setup, bufnr)
+	end,
 })
 
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-    { name = 'cmdline' }
-  })
-})
-
-local capabilities = cmp_lsp.default_capabilities()
-
-lsp.rust_analyzer.setup({
-	capabilities = capabilities
+cmp.setup.cmdline(":", {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = cmp.config.sources({
+		{ name = "path" },
+	}, {
+		{ name = "cmdline" },
+	}),
 })
 
 -- setup formatter
-require("formatter").setup {
-	["*"] = {
-		require("formatter.filetypes.any").remove_trailing_whitespace
-	}
-}
+require("formatter").setup({
+	logging = true,
+	log_level = vim.log.levels.INFO,
+	filetype = {
+		rust = require("formatter.filetypes.rust").rustfmt,
+		c = require("formatter.filetypes.c").clangformat,
+		cpp = require("formatter.filetypes.cpp").clangformat,
+		cmake = require("formatter.filetypes.cmake").cmakeformat,
+		toml = require("formatter.filetypes.toml").taplo,
+		zig = require("formatter.filetypes.zig").zigfmt,
+		lua = require("formatter.filetypes.lua").stylua,
+		markdown = require("formatter.filetypes.markdown").prettier,
+		json = require("formatter.filetypes.json").pretier,
+
+		["*"] = {
+			require("formatter.filetypes.any").remove_trailing_whitespace,
+		},
+	},
+})
 
 -- setup lsp keybinds
 -- as per doc suggestions, only setup them when a lsp client is active
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(args)
-    vim.keymap.set({'n', 'v'}, '<M-CR>', vim.lsp.buf.code_action, { buffer = args.buf })
-  end,
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		vim.keymap.set({ "n", "v" }, "<M-CR>", vim.lsp.buf.code_action, { buffer = args.buf })
+	end,
 })
 
 -- setup dap
-local dap = require('dap')
+local dap = require("dap")
 
 local codelldb = mason_registry.get_package("codelldb")
 local codelldb_install_path = codelldb:get_install_path()
@@ -94,17 +107,17 @@ local codelldb_executable = extension_path .. "adapter/codelldb"
 local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
 
 dap.adapters.lldb = {
-  type = 'executable',
-  command = "/usr/bin/lldb-vscode",
-  name = 'lldb',
+	type = "executable",
+	command = "/usr/bin/lldb-vscode",
+	name = "lldb",
 }
 dap.adapters.rust = dap.adapters.lldb
 dap.adapters.c = dap.adapters.lldb
 dap.adapters.cpp = dap.adapters.lldb
 
-function setup_dap_configurations() 
+local function setup_dap_configurations()
 	if workspace_root ~= nil then
-		local did_setup_launch = rust_utils.try_setup_launch_json(workspace_root)
+		rust_utils.try_setup_launch_json(workspace_root)
 	end
 	if project_type == "rust" then
 		if dap.configurations[project_type] == nil then
@@ -112,9 +125,9 @@ function setup_dap_configurations()
 		end
 
 		local rust = {}
-		local cargo_dir = vim.fn.trim(vim.fn.system('which cargo'))
-		local debugger = 'lldb'
-		found_binaries = rust_utils.find_cargo_binaries(workspace_root)
+		vim.fn.trim(vim.fn.system("which cargo"))
+		local debugger = "lldb"
+		local found_binaries = rust_utils.find_cargo_binaries(workspace_root)
 		rust.binaries = found_binaries
 
 		if found_binaries == nil then
@@ -122,31 +135,28 @@ function setup_dap_configurations()
 		end
 
 		for _, bin in ipairs(found_binaries) do
-			local debug_bin_path = workspace_root .. '/target/debug/' .. bin
-			local release_bin_path = workspace_root .. '/target/debug/' .. bin
+			local debug_bin_path = workspace_root .. "/target/debug/" .. bin
+			local release_bin_path = workspace_root .. "/target/debug/" .. bin
 			local config = {
 				type = debugger,
-				request = 'launch',
-				name = 'debug ' .. bin,
+				request = "launch",
+				name = "debug " .. bin,
 				program = debug_bin_path,
 				cwd = workspace_root,
-				args = {
-				},
-				preLaunchTask = "cargo-debug-"..bin
+				args = {},
+				preLaunchTask = "cargo-debug-" .. bin,
 			}
 			table.insert(dap.configurations[project_type], config)
 			config = {
 				type = debugger,
-				request = 'launch',
-				name = 'release ' .. bin,
+				request = "launch",
+				name = "release " .. bin,
 				program = release_bin_path,
 				cwd = workspace_root,
-				args = {
-				},
-				preLaunchTask = "cargo-release-"..bin
+				args = {},
+				preLaunchTask = "cargo-release-" .. bin,
 			}
 			table.insert(dap.configurations[project_type], config)
-
 		end
 		vim.g.rust = rust
 	end
@@ -174,34 +184,51 @@ function Run(opts)
 			if found_configuration then
 				dap.run(found_configuration, {})
 			else
-				print('No configuration containing ' .. config_substr)
+				print("No configuration containing " .. config_substr)
 			end
-		else 
+		else
 			local old_config = vim.bo.filetype
 			vim.bo.filetype = project_type
 			dap.continue()
 			vim.bo.filetype = old_config
 		end
 	end
-
 end
 
-vim.api.nvim_create_user_command('Bp', 'lua require \'dap\'.toggle_breakpoint()', {})
-vim.api.nvim_create_user_command('Run', Run, { nargs='?' })
-vim.keymap.set({'i', 'n', 'v'}, '<F5>', Run, {  })
+vim.api.nvim_create_user_command("Bp", "lua require 'dap'.toggle_breakpoint()", {})
+vim.api.nvim_create_user_command("Run", Run, { nargs = "?" })
 
 setup_dap_configurations()
 -- setup overseer - task runner
-local overseer = require('overseer')
+local overseer = require("overseer")
 overseer.setup({
-	templates = { "cargo.debug", "cargo.release", "cargo.targets" }
+	templates = { "cargo.debug", "cargo.release", "cargo.targets" },
 })
 
+-- setup treesitter
+local treesitter = require("nvim-treesitter.configs")
+treesitter.setup({
+	ensure_installed = "all", -- Yes... Install them all
+})
+
+-- setup Telescope
+local telescope = require("telescope")
+telescope.setup({
+	extensions = {
+		fzf = {
+			fuzzy = true,
+			override_generic_sorter = true,
+			override_file_sorter = true,
+			case_mode = "smart_case",
+		},
+	},
+})
+telescope.load_extension("fzf")
 
 -- setup popui
 --vim.ui.select = require"popui.ui-overrider"
 --vim.ui.input = require"popui.input-overrider"
---vim.api.nvim_set_keymap("n", ",d", ':lua require"popui.diagnostics-navigator"()<CR>', { noremap = true, silent = true }) 
+--vim.api.nvim_set_keymap("n", ",d", ':lua require"popui.diagnostics-navigator"()<CR>', { noremap = true, silent = true })
 --vim.api.nvim_set_keymap("n", ",m", ':lua require"popui.marks-manager"()<CR>', { noremap = true, silent = true })
 --vim.api.nvim_set_keymap("n", ",r", ':lua require"popui.references-navigator"()<CR>', { noremap = true, silent = true })
 --

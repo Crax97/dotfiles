@@ -6,7 +6,10 @@ filetype plugin indent on
 
 set number relativenumber
 set signcolumn=yes
+
 set tabstop=4
+set shiftwidth=4
+set expandtab
 
 let g:mkdp_browser = '/usr/bin/firefox'
 let g:mkdp_port = '8292'

@@ -66,6 +66,7 @@ local plugins = {
 
 	"levouh/tint.nvim", -- Dim inactive windows
 
+	"hood/popui.nvim", -- replace nvim input/select menus
 	"equalsraf/neovim-gui-shim", -- Nvim QT gui options
 }
 

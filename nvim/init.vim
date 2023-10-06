@@ -39,9 +39,10 @@ map <Leader><F11> lua require 'dap'.step_out()<CR>
 
 
 " Setup Telescope bindings
-map <Leader>gl :Telescope live_grep<CR>
-map <Leader>gf :Telescope find_files<CR>
-map <Leader>gs :Telescope lsp_workspace_symbols<CR>
+map <Leader>tl :Telescope live_grep<CR>
+map <Leader>tf :Telescope find_files<CR>
+map <Leader>ts :Telescope lsp_workspace_symbols<CR>
+map <Leader>td :Telescope diagnostics<CR>
 
 " Setup lsp bindings
 map gd :lua vim.lsp.buf.definition()<CR>

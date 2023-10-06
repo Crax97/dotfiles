@@ -228,6 +228,7 @@ treesitter.setup({
 })
 
 -- setup Telescope
+local actions = require("telescope.actions")
 local telescope = require("telescope")
 telescope.setup({
 	extensions = {
@@ -236,6 +237,14 @@ telescope.setup({
 			override_generic_sorter = true,
 			override_file_sorter = true,
 			case_mode = "smart_case",
+		},
+	},
+	defaults = {
+		mappings = {
+			i = {
+				["<C-j>"] = actions.move_selection_next,
+				["<C-k>"] = actions.move_selection_previous,
+			},
 		},
 	},
 })
@@ -260,12 +269,8 @@ require("lualine").setup({
 	},
 })
 
--- setup popui
---vim.ui.select = require"popui.ui-overrider"
---vim.ui.input = require"popui.input-overrider"
---vim.api.nvim_set_keymap("n", ",d", ':lua require"popui.diagnostics-navigator"()<CR>', { noremap = true, silent = true })
---vim.api.nvim_set_keymap("n", ",m", ':lua require"popui.marks-manager"()<CR>', { noremap = true, silent = true })
---vim.api.nvim_set_keymap("n", ",r", ':lua require"popui.references-navigator"()<CR>', { noremap = true, silent = true })
+vim.ui.select = require("popui.ui-overrider")
+vim.ui.input = require("popui.input-overrider")
 --
 ---- setup lightbulb plugin
 --require('nvim-lightbulb').setup({

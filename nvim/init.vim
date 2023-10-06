@@ -46,3 +46,17 @@ map <Leader>gs :Telescope lsp_workspace_symbols<CR>
 " Setup lsp bindings
 map gd :lua vim.lsp.buf.definition()<CR>
 map <Leader>r :lua vim.lsp.buf.rename()<CR>
+
+" Hide vim/nvim statusbar: it's replaced by airline
+set noshowmode
+set noruler
+set laststatus=3 " nvim supports global statusline
+
+" Use Normal color for window separator bg
+function! GetHighlight(g, t)
+    let output = execute('hi ' . a:g)
+    return matchstr(output, a:t.'=\zs\S*')
+endfunction
+
+" Hide the vertical separator, use only fillchars
+hi VertSplit term=NONE cterm=NONE gui=NONE guifg=NONE guibg=NONE ctermbg=NONE ctermfg=NONE

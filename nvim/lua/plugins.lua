@@ -61,6 +61,8 @@ local plugins = {
 		build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
 	}, -- Native fzf implementation
 
+	"nvim-lualine/lualine.nvim",
+
 	"equalsraf/neovim-gui-shim", -- Nvim QT gui options
 }
 

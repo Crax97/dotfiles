@@ -234,6 +234,22 @@ telescope.setup({
 })
 telescope.load_extension("fzf")
 
+require("lualine").setup({
+	options = {
+		section_separators = { left = "", right = "" },
+		component_separators = { left = "", right = "" },
+		theme = "horizon",
+	},
+	sections = {
+		lualine_a = { "mode" },
+		lualine_b = { "branch", "diff", "diagnostics" },
+		lualine_c = { "filename", "buffers" },
+		lualine_x = { "encoding", "fileformat", "filetype" },
+		lualine_y = { "progress" },
+		lualine_z = { "location" },
+	},
+})
+
 -- setup popui
 --vim.ui.select = require"popui.ui-overrider"
 --vim.ui.input = require"popui.input-overrider"

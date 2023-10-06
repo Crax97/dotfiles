@@ -16,8 +16,9 @@ end
 
 -- setup tint
 require("tint").setup({
-	tint = -70,
-	saturation = 0.6,
+	tint = -60,
+	saturation = 0.8,
+	highlight_ignore_patterns = { "Comment" },
 })
 
 -- setup mason

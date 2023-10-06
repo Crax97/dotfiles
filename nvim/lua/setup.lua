@@ -75,10 +75,9 @@ cmp.setup({
 })
 
 cmp.setup.cmdline(":", {
-	mapping = mapping,
+	mapping = cmp.mapping.preset.cmdline(),
 	sources = cmp.config.sources({
 		{ name = "path" },
-		{ name = "rg" },
 	}, {
 		{ name = "cmdline" },
 	}),

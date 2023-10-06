@@ -58,11 +58,8 @@ set noshowmode
 set noruler
 set laststatus=3 " nvim supports global statusline
 
-" Use Normal color for window separator bg
-function! GetHighlight(g, t)
-    let output = execute('hi ' . a:g)
-    return matchstr(output, a:t.'=\zs\S*')
-endfunction
-
 " Hide the vertical separator, use only fillchars
 hi VertSplit term=NONE cterm=NONE gui=NONE guifg=NONE guibg=NONE ctermbg=NONE ctermfg=NONE
+
+" Setup glsl filetype
+autocmd! BufNewFile,BufRead *.glsl,*.vs,*.fs,*.cs,*.frag,*.vert,*.compute set ft=glsl

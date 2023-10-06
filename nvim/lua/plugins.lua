@@ -65,6 +65,7 @@ local plugins = {
 	"nvim-lualine/lualine.nvim",
 
 	"levouh/tint.nvim", -- Dim inactive windows
+    "tikhomirov/vim-glsl", -- glsl stuff
 
 	"hood/popui.nvim", -- replace nvim input/select menus
 	"equalsraf/neovim-gui-shim", -- Nvim QT gui options

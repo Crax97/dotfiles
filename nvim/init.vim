@@ -19,7 +19,7 @@ augroup FormatAutogroup
 		autocmd BufWritePost * FormatWrite
 augroup END
 
-colorscheme habamax
+colorscheme oxocarbon
 
 " Set leader
 let mapleader = ","

@@ -14,6 +14,12 @@ if workspace_root ~= nil then
 	vim.g.project_type = project_type
 end
 
+-- setup tint
+require("tint").setup({
+	tint = -70,
+	saturation = 0.6,
+})
+
 -- setup mason
 mason.setup()
 mason_lsp.setup({

@@ -19,6 +19,11 @@ augroup FormatAutogroup
 		autocmd BufWritePost * FormatWrite
 augroup END
 
+augroup FormatAutogroup
+		autocmd!
+		autocmd BufWritePost * lua require('lint').try_lint()
+augroup END
+
 colorscheme oxocarbon
 
 " Set leader

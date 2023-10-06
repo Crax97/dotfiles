@@ -271,6 +271,37 @@ require("lualine").setup({
 
 vim.ui.select = require("popui.ui-overrider")
 vim.ui.input = require("popui.input-overrider")
+
+-- setup nvim-lint
+local rust_format = "%E%f:%l:%c: %\\d%#:%\\d%# %.%\\{-}"
+	.. "error:%.%\\{-} %m,%W%f:%l:%c: %\\d%#:%\\d%# %.%\\{-}"
+	.. "warning:%.%\\{-} %m,%C%f:%l %m,%-G,%-G"
+	.. "error: aborting %.%#,%-G"
+	.. "error: Could not compile %.%#,%E"
+	.. "error: %m,%Eerror[E%n]: %m,%-G"
+	.. "warning: the option `Z` is unstable %.%#,%W"
+	.. "warning: %m,%Inote: %m,%C %#--> %f:%l:%c"
+
+local lint = require("lint")
+lint.linters.cargo_clippy = {
+	cmd = "cargo",
+	stdin = false,
+	append_fname = false,
+	args = { "clippy", "-q" },
+	stream = "both",
+	ignore_exitcode = "false",
+	env = nil,
+	parser = require("lint.parser").from_errorformat(rust_format),
+}
+
+lint.linters_by_ft = {
+	rust = { "cargo_clippy" },
+    glsl = { "glslc" },
+    c = { "clangtidy" },
+    cpp = { "clangtidy "},
+    markdown = { "markdownlint" },
+}
+
 --
 ---- setup lightbulb plugin
 --require('nvim-lightbulb').setup({

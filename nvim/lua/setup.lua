@@ -31,6 +31,23 @@ mason_lsp.setup_handlers({
 })
 
 -- setup cmp + setup lsp
+local mapping = cmp.mapping.preset.insert({
+	["<C-m>"] = cmp.mapping.scroll_docs(-4),
+	["<C-n>"] = cmp.mapping.scroll_docs(4),
+	["<C-e>"] = cmp.mapping.abort(),
+	["<C-j>"] = cmp.mapping.select_next_item(),
+	["<C-k>"] = cmp.mapping.select_prev_item(),
+	["<C-CR>"] = function()
+		if cmp.visible() then
+			cmp.mapping.confirm({
+				behavior = cmp.ConfirmBehavior.Replace,
+				select = true,
+			})
+		else
+			cmp.complete()
+		end
+	end,
+})
 cmp.setup({
 	snippet = {
 		expand = function(args)
@@ -44,25 +61,17 @@ cmp.setup({
 	}, {
 		{ name = "buffer" },
 	}),
-	mapping = cmp.mapping.preset.insert({
-		["<C-b>"] = cmp.mapping.scroll_docs(-4),
-		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-e>"] = cmp.mapping.abort(),
-		["<C-CR>"] = cmp.mapping.confirm({
-			behavior = cmp.ConfirmBehavior.Insert,
-			select = true,
-		}), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-	}),
+	mapping = mapping,
 	on_attach = function(client, bufnr)
 		require("lsp_signature").on_attach(signature_setup, bufnr)
 	end,
 })
 
 cmp.setup.cmdline(":", {
-	mapping = cmp.mapping.preset.cmdline(),
+	mapping = mapping,
 	sources = cmp.config.sources({
 		{ name = "path" },
+		{ name = "rg" },
 	}, {
 		{ name = "cmdline" },
 	}),

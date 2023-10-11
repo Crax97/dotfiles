@@ -18,7 +18,7 @@ end
 require("tint").setup({
 	tint = -60,
 	saturation = 0.8,
-	highlight_ignore_patterns = { "Comment" },
+	highlight_ignore_patterns = { "Comment", "Tabline" },
 })
 
 -- setup mason
@@ -36,7 +36,6 @@ mason_lsp.setup_handlers({
 		lsp[sn].setup({})
 	end,
 })
-
 -- setup cmp + setup lsp
 local mapping = cmp.mapping.preset.insert({
 	["<C-m>"] = cmp.mapping.scroll_docs(-4),
@@ -46,12 +45,13 @@ local mapping = cmp.mapping.preset.insert({
 	["<C-k>"] = cmp.mapping.select_prev_item(),
 	["<C-CR>"] = function()
 		if cmp.visible() then
-			cmp.mapping.confirm({
+			cmp.confirm({
 				behavior = cmp.ConfirmBehavior.Replace,
 				select = true,
 			})
 		else
 			cmp.complete()
+			--    vim.fn.execute("normal! i\n")
 		end
 	end,
 })
@@ -252,13 +252,13 @@ telescope.load_extension("fzf")
 require("lualine").setup({
 	options = {
 		section_separators = { left = "", right = "" },
-		component_separators = { left = "", right = "" },
+		component_separators = { left = "│", right = "│" },
 		theme = "horizon",
 	},
 	sections = {
 		lualine_a = { "mode" },
 		lualine_b = { "branch", "diff", "diagnostics" },
-		lualine_c = { "buffers" },
+		lualine_c = { "filename" },
 		lualine_x = { "encoding", "fileformat", "filetype" },
 		lualine_y = { "progress" },
 		lualine_z = { "location" },
@@ -295,10 +295,10 @@ lint.linters.cargo_clippy = {
 
 lint.linters_by_ft = {
 	rust = { "cargo_clippy" },
-    glsl = { "glslc" },
-    c = { "clangtidy" },
-    cpp = { "clangtidy "},
-    markdown = { "markdownlint" },
+	glsl = { "glslc" },
+	c = { "clangtidy" },
+	cpp = { "clangtidy " },
+	markdown = { "markdownlint" },
 }
 
 --

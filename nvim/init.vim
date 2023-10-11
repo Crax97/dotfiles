@@ -12,17 +12,19 @@ set shiftwidth=4
 set expandtab
 
 let g:mkdp_browser = '/usr/bin/firefox'
+
 let g:mkdp_port = '8292'
 
-augroup FormatAutogroup
+function! ExecBufWriteTasks()
+    lua require('lint').try_lint()
+    FormatWrite
+endfunction
+
+augroup Mine
 		autocmd!
-		autocmd BufWritePost * FormatWrite
+		autocmd BufWritePost * call ExecBufWriteTasks()
 augroup END
 
-augroup FormatAutogroup
-		autocmd!
-		autocmd BufWritePost * lua require('lint').try_lint()
-augroup END
 
 colorscheme oxocarbon
 
